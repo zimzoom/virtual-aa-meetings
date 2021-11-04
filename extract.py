@@ -44,8 +44,12 @@ for meeting in soup.find_all(class_='css-ggcp4y'):
     # Not every meeting has a description
     if meeting.find(class_='css-fzcsno'):
         this_entry["Desc"] = meeting.find(class_='css-fzcsno').get_text()
-    entry_categs = meeting.find_all(class_='css-108n2y7')
-    this_entry["Categories"] = ",".join([button.get_text() for button in entry_categs])
+
+    # Removes weekday category labels ('Tuesday' etc) bc they are redundant
+    entry_categ_buttons = meeting.find_all(class_='css-108n2y7')
+    entry_categs = [button.get_text() for button in entry_categ_buttons]
+    categ_words = [word for word in entry_categs if not re.match('.*day', word)]
+    this_entry["Categories"] = ",".join(categ_words)
     
     all_entries.append(this_entry)
 
